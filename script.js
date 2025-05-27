@@ -53,6 +53,15 @@ document.getElementById("mobile-nav-toggle").onclick = () => {
   document.getElementById("nav").classList.toggle("show");
 };
 
+const scrollBtn = document.getElementById("scrollTopBtn");
+
+window.onscroll = () => {
+  scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+};
+
+scrollBtn.onclick = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
 gsap.from("#about-us img,#about-us-in", {
   y: 90,
