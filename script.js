@@ -63,6 +63,11 @@ scrollBtn.onclick = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
+
+document.getElementById("darkToggle").addEventListener("change", function () {
+  document.body.classList.toggle("dark-mode");
+});
+
 gsap.from("#about-us img,#about-us-in", {
   y: 90,
   opacity: 0,
