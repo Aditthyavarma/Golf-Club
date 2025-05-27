@@ -194,6 +194,33 @@ video {
   }
 }
 
+#mobile-nav-toggle {
+  display: none;
+  font-size: 2rem;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  #nav {
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 1rem;
+    display: none;
+  }
+
+  #nav.show {
+    display: flex;
+  }
+
+  #mobile-nav-toggle {
+    display: block;
+  }
+}
+
 #about-us {
   height: 40vh;
   width: 100%;

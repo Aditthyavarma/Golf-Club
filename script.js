@@ -48,6 +48,12 @@ gsap.to("#main", {
   },
 });
 
+
+document.getElementById("mobile-nav-toggle").onclick = () => {
+  document.getElementById("nav").classList.toggle("show");
+};
+
+
 gsap.from("#about-us img,#about-us-in", {
   y: 90,
   opacity: 0,
