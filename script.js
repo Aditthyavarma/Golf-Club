@@ -48,6 +48,26 @@ gsap.to("#main", {
   },
 });
 
+
+document.getElementById("mobile-nav-toggle").onclick = () => {
+  document.getElementById("nav").classList.toggle("show");
+};
+
+const scrollBtn = document.getElementById("scrollTopBtn");
+
+window.onscroll = () => {
+  scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+};
+
+scrollBtn.onclick = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+
+document.getElementById("darkToggle").addEventListener("change", function () {
+  document.body.classList.toggle("dark-mode");
+});
+
 gsap.from("#about-us img,#about-us-in", {
   y: 90,
   opacity: 0,
