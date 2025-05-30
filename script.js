@@ -29,7 +29,6 @@ gsap.to("#nav", {
   scrollTrigger: {
     trigger: "#nav",
     scroller: "body",
-    // markers:true,
     start: "top -10%",
     end: "top -11%",
     scrub: 1,
@@ -41,7 +40,6 @@ gsap.to("#main", {
   scrollTrigger: {
     trigger: "#main",
     scroller: "body",
-    // markers: true,
     start: "top -25%",
     end: "top -70%",
     scrub: 2,
@@ -55,7 +53,6 @@ gsap.from("#about-us img,#about-us-in", {
   scrollTrigger: {
     trigger: "#about-us",
     scroller: "body",
-    // markers:true,
     start: "top 70%",
     end: "top 65%",
     scrub: 1,
@@ -63,14 +60,11 @@ gsap.from("#about-us img,#about-us-in", {
 });
 
 gsap.from(".card", {
-  // scale: 0.8,
-  // opacity: 0,
   duration: 1,
   stagger: 0.1,
   scrollTrigger: {
     trigger: ".card",
     scroller: "body",
-    // markers:false,
     start: "top 70%",
     end: "top 65%",
     scrub: 1,
@@ -83,32 +77,62 @@ gsap.from("#colon1", {
   scrollTrigger: {
     trigger: "#colon1",
     scroller: "body",
-    // markers:true,
     start: "top 55%",
     end: "top 45%",
     scrub: 4,
   },
 });
+
 gsap.from("#colon2", {
   y: 70,
   x: 70,
   scrollTrigger: {
     trigger: "#colon1",
     scroller: "body",
-    // markers:true,
     start: "top 55%",
     end: "top 45%",
     scrub: 4,
   },
 });
+
 gsap.from("#page4 h1", {
   y: 50,
   scrollTrigger: {
     trigger: "#page4 h1",
     scroller: "body",
-    // markers:true,
     start: "top 75%",
     end: "top 70%",
     scrub: 3,
   },
+});
+
+// New Feature: Scroll-to-top button
+const scrollBtn = document.createElement('button');
+scrollBtn.id = "scrollToTopBtn";
+scrollBtn.textContent = "↑";
+scrollBtn.style.position = "fixed";
+scrollBtn.style.bottom = "30px";
+scrollBtn.style.right = "30px";
+scrollBtn.style.width = "50px";
+scrollBtn.style.height = "50px";
+scrollBtn.style.borderRadius = "50%";
+scrollBtn.style.border = "none";
+scrollBtn.style.backgroundColor = "#95C11E";
+scrollBtn.style.color = "white";
+scrollBtn.style.fontSize = "24px";
+scrollBtn.style.cursor = "pointer";
+scrollBtn.style.display = "none";
+scrollBtn.style.zIndex = "1000";
+document.body.appendChild(scrollBtn);
+
+scrollBtn.addEventListener("click", function () {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+window.addEventListener("scroll", function () {
+  if (window.scrollY > 300) {
+    scrollBtn.style.display = "block";
+  } else {
+    scrollBtn.style.display = "none";
+  }
 });
