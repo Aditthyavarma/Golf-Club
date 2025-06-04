@@ -1,241 +1,289 @@
-<!Adithya>
+// Golf Club Website - Enhanced Script File
+document.addEventListener('DOMContentLoaded', function() {
+    // ============ Cursor Effects ============
+    const cursor = document.getElementById('cursor');
+    const cursorBlur = document.getElementById('cursor-blur');
+    
+    document.addEventListener('mousemove', function(e) {
+        cursor.style.left = e.clientX - 10 + 'px';
+        cursor.style.top = e.clientY - 10 + 'px';
+        cursorBlur.style.left = e.clientX - 250 + 'px';
+        cursorBlur.style.top = e.clientY - 250 + 'px';
+    });
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Golf Club</title>
-    <link
-      rel="shortcut icon"
-      href="https://sidcupfamilygolf.com/wp-content/themes/puttosaurus/favicons/favicon-32x32.png"
-      type="image/x-icon"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@3.4.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      #booking {
-        padding: 50px 20px;
-        background-color: #f5f5f5;
-        text-align: center;
-      }
+    // ============ Navigation ============
+    const navItems = document.querySelectorAll('#nav h4');
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            cursor.style.transform = 'scale(3)';
+            cursor.style.backgroundColor = 'transparent';
+            cursor.style.border = '1px solid #95c11e';
+        });
+        item.addEventListener('mouseleave', () => {
+            cursor.style.transform = 'scale(1)';
+            cursor.style.backgroundColor = '#95c11e';
+            cursor.style.border = 'none';
+        });
+    });
 
-      #booking h2 {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-      }
+    // Mobile Navigation Toggle
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const nav = document.getElementById('nav');
+    
+    mobileNavToggle.addEventListener('click', () => {
+        nav.classList.toggle('show');
+        mobileNavToggle.textContent = nav.classList.contains('show') ? '✕' : '☰';
+    });
 
-      #booking form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        max-width: 500px;
-        margin: 0 auto;
-      }
+    // ============ Booking System Enhancements ============
+    const bookingForm = document.querySelector('#booking form');
+    const serviceSelect = document.querySelector('#booking select[name="service"]');
+    const dateInput = document.querySelector('#booking input[name="date"]');
+    const timeInput = document.querySelector('#booking input[name="time"]');
+    const nameInput = document.querySelector('#booking input[name="name"]');
+    const emailInput = document.querySelector('#booking input[name="email"]');
+    const guestsInput = document.querySelector('#booking input[name="guests"]');
+    const submitBtn = document.querySelector('#booking button[type="submit"]');
 
-      #booking input,
-      #booking select,
-      #booking button {
-        padding: 10px;
-        font-size: 1rem;
-        width: 100%;
-        max-width: 400px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
+    // Initialize date picker with min date as today
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
 
-      #booking button {
-        background-color: #2d6a4f;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
+    // Create error message elements
+    const createErrorElement = (input, message) => {
+        // Remove existing error if any
+        const existingError = input.nextElementSibling;
+        if (existingError && existingError.classList.contains('error-message')) {
+            existingError.remove();
+        }
 
-      #booking button:hover {
-        background-color: #1b4332;
-      }
-    </style>
-  </head>
+        const error = document.createElement('div');
+        error.className = 'error-message';
+        error.textContent = message;
+        error.style.color = '#ff3333';
+        error.style.fontSize = '0.8rem';
+        error.style.marginTop = '5px';
+        error.style.textAlign = 'left';
+        error.style.width = '100%';
+        input.parentNode.insertBefore(error, input.nextSibling);
+        return error;
+    };
 
-  <body>
-    <div id="google_translate_element"></div>
+    // Validate service selection
+    serviceSelect.addEventListener('change', function() {
+        if (serviceSelect.value === '') {
+            createErrorElement(serviceSelect, 'Please select a service');
+        } else {
+            const error = serviceSelect.nextElementSibling;
+            if (error && error.classList.contains('error-message')) {
+                error.remove();
+            }
+        }
+    });
 
-    <div id="nav">
-      <img src="https://sidcupfamilygolf.com/wp-content/uploads/2023/02/logo-white.svg" alt="Golf Club Logo" />
-      <h4>MEMBERSHIP</h4>
-      <h4>GOLF ACADEMY</h4>
-      <h4>CHAMPIONSHIP COURSE</h4>
-      <h4>CLUBHOUSE</h4>
-      <h4>TOURNAMENTS</h4>
-    </div>
+    // Validate date (must be today or future)
+    dateInput.addEventListener('change', function() {
+        const selectedDate = new Date(dateInput.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (!dateInput.value) {
+            createErrorElement(dateInput, 'Please select a date');
+        } else if (selectedDate < today) {
+            createErrorElement(dateInput, 'Date cannot be in the past');
+        } else {
+            const error = dateInput.nextElementSibling;
+            if (error && error.classList.contains('error-message')) {
+                error.remove();
+            }
+        }
+    });
 
-    <div id="cursor"></div>
-    <div id="cursor-blur"></div>
+    // Validate time (must be during business hours)
+    timeInput.addEventListener('change', function() {
+        if (!timeInput.value) {
+            createErrorElement(timeInput, 'Please select a time');
+        } else {
+            const hours = parseInt(timeInput.value.split(':')[0]);
+            if (hours < 7 || hours > 22) {
+                createErrorElement(timeInput, 'We are open from 7:00 AM to 10:00 PM');
+            } else {
+                const error = timeInput.nextElementSibling;
+                if (error && error.classList.contains('error-message')) {
+                    error.remove();
+                }
+            }
+        }
+    });
 
-    <video autoplay loop muted src="Assests/hero.mp4"></video>
+    // Validate name (minimum 3 characters)
+    nameInput.addEventListener('blur', function() {
+        if (!nameInput.value.trim()) {
+            createErrorElement(nameInput, 'Name is required');
+        } else if (nameInput.value.trim().length < 3) {
+            createErrorElement(nameInput, 'Name must be at least 3 characters');
+        } else {
+            const error = nameInput.nextElementSibling;
+            if (error && error.classList.contains('error-message')) {
+                error.remove();
+            }
+        }
+    });
 
-    <div id="main">
-      <div id="page1">
-        <h1>
-          EAT. DRINK. <br />
-          PLAY.
-        </h1>
-        <h2>WELCOME TO GOLF Club!</h2>
-        <p>
-          Golf Club is a premier golfing destination offering a championship
-          course, expert coaching, and first-class amenities...
-        </p>
-        <a href="#scroller-in" id="arrow">
-          <i class="ri-arrow-down-line"></i>
-        </a>
-      </div>
+    // Validate email format
+    emailInput.addEventListener('blur', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailInput.value.trim()) {
+            createErrorElement(emailInput, 'Email is required');
+        } else if (!emailRegex.test(emailInput.value)) {
+            createErrorElement(emailInput, 'Please enter a valid email');
+        } else {
+            const error = emailInput.nextElementSibling;
+            if (error && error.classList.contains('error-message')) {
+                error.remove();
+            }
+        }
+    });
 
-      <div id="page2">
-        <!-- scroller, about-us, cards, etc. (unchanged content) -->
-        <!-- ... -->
+    // Validate number of guests
+    guestsInput.addEventListener('change', function() {
+        if (parseInt(guestsInput.value) < 1) {
+            createErrorElement(guestsInput, 'Must have at least 1 guest');
+        } else if (parseInt(guestsInput.value) > 10) {
+            createErrorElement(guestsInput, 'Maximum 10 guests per booking');
+        } else {
+            const error = guestsInput.nextElementSibling;
+            if (error && error.classList.contains('error-message')) {
+                error.remove();
+            }
+        }
+    });
 
-        <div id="green-div">
-          <img
-            src="https://eiwgew27fhz.exactdn.com/wp-content/themes/puttosaurus/img/dots-side.svg"
-            alt=""
-          />
-          <h4>
-            SIGN UP FOR SIDCUP NEWS AND SPECIAL OFFERS STRAIGHT TO YOUR INBOX
-          </h4>
-          <img
-            src="https://eiwgew27fhz.exactdn.com/wp-content/themes/puttosaurus/img/dots-side.svg"
-            alt=""
-          />
-        </div>
-      </div>
+    // Calculate price based on service and guests
+    function calculatePrice() {
+        if (!serviceSelect.value || !guestsInput.value) return 0;
+        
+        const prices = {
+            'toptracer': 25,
+            'lessons': 50,
+            'adventure': 15,
+            'membership': 0
+        };
+        
+        const service = serviceSelect.value;
+        const guests = parseInt(guestsInput.value) || 1;
+        
+        return prices[service] * (service === 'lessons' ? 1 : guests);
+    }
 
-      <div id="page3">
-        <p>
-          Excellent couple of hours, relax and enjoy in the fun. Staff were
-          accommodating...
-        </p>
-        <img
-          id="colon1"
-          src="https://eiwgew27fhz.exactdn.com/wp-content/themes/puttosaurus/img/quote-left.svg"
-          alt=""
-        />
-        <img
-          id="colon2"
-          src="https://eiwgew27fhz.exactdn.com/wp-content/themes/puttosaurus/img/quote-right.svg"
-          alt=""
-        />
-      </div>
+    // Update price display when service or guests change
+    serviceSelect.addEventListener('change', updatePriceDisplay);
+    guestsInput.addEventListener('change', updatePriceDisplay);
+    
+    function updatePriceDisplay() {
+        const priceDisplay = document.getElementById('price-display') || 
+            document.createElement('div');
+        
+        if (!document.getElementById('price-display')) {
+            priceDisplay.id = 'price-display';
+            priceDisplay.style.marginTop = '15px';
+            priceDisplay.style.fontWeight = 'bold';
+            priceDisplay.style.fontSize = '1.2rem';
+            priceDisplay.style.color = '#95c11e';
+            submitBtn.parentNode.insertBefore(priceDisplay, submitBtn);
+        }
+        
+        const price = calculatePrice();
+        if (price > 0) {
+            priceDisplay.textContent = `Total: £${price}`;
+        } else {
+            priceDisplay.textContent = '';
+        }
+    }
 
-      <div id="page4">
-        <h1>WHAT ARE YOU WAITING FOR?</h1>
-        <div class="elem">
-          <h2>TOPTRACER RANGE</h2>
-          <img
-            src="https://eiwgew27fhz.exactdn.com/wp-content/uploads/2023/02/page-toptracer-1024x683.jpg"
-            alt=""
-          />
-        </div>
-        <div class="elem">
-          <h2>GOLF LESSONS</h2>
-          <img
-            src="https://eiwgew27fhz.exactdn.com/wp-content/uploads/2023/02/page-lessons-1024x683.jpg"
-            alt=""
-          />
-        </div>
-        <div class="elem">
-          <h2>ADVENTURE GOLF</h2>
-          <img
-            src="https://eiwgew27fhz.exactdn.com/wp-content/uploads/2023/02/page-ag-1024x682.jpg"
-            alt=""
-          />
-        </div>
-      </div>
+    // Form submission handler
+    bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Trigger all validations
+        serviceSelect.dispatchEvent(new Event('change'));
+        dateInput.dispatchEvent(new Event('change'));
+        timeInput.dispatchEvent(new Event('change'));
+        nameInput.dispatchEvent(new Event('blur'));
+        emailInput.dispatchEvent(new Event('blur'));
+        guestsInput.dispatchEvent(new Event('change'));
 
-      <div id="booking">
-        <h2>Book Your Visit</h2>
-        <form action="#" method="post">
-          <select name="service" required>
-            <option value="">Select a Service</option>
-            <option value="toptracer">Toptracer Range</option>
-            <option value="lessons">Golf Lessons</option>
-            <option value="adventure">Adventure Golf</option>
-          </select>
-          <input type="date" name="date" required />
-          <input type="time" name="time" required />
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
-          <button type="submit">Submit Booking</button>
-        </form>
-      </div>
+        // Check if any errors exist
+        const errors = document.querySelectorAll('.error-message');
+        if (errors.length === 0) {
+            // Show success message
+            const successMsg = document.createElement('div');
+            successMsg.textContent = 'Booking submitted successfully!';
+            successMsg.style.color = '#95c11e';
+            successMsg.style.fontWeight = 'bold';
+            successMsg.style.marginTop = '20px';
+            successMsg.style.textAlign = 'center';
+            successMsg.style.fontSize = '1.2rem';
+            
+            // Remove existing success message if any
+            const existingSuccess = bookingForm.querySelector('.success-message');
+            if (existingSuccess) existingSuccess.remove();
+            
+            successMsg.classList.add('success-message');
+            bookingForm.appendChild(successMsg);
+            
+            // Show booking summary
+            const bookingSummary = `
+                <div style="margin-top: 20px; text-align: left; background: #111; padding: 15px; border-radius: 8px;">
+                    <h3 style="color: #95c11e; margin-bottom: 10px;">Booking Summary</h3>
+                    <p><strong>Service:</strong> ${serviceSelect.options[serviceSelect.selectedIndex].text}</p>
+                    <p><strong>Date:</strong> ${dateInput.value}</p>
+                    <p><strong>Time:</strong> ${timeInput.value}</p>
+                    <p><strong>Guests:</strong> ${guestsInput.value}</p>
+                    <p><strong>Total:</strong> £${calculatePrice()}</p>
+                </div>
+            `;
+            
+            successMsg.insertAdjacentHTML('afterend', bookingSummary);
+            
+            // Reset form after 5 seconds
+            setTimeout(() => {
+                bookingForm.reset();
+                successMsg.remove();
+                document.querySelector('#booking .success-message + div').remove();
+                updatePriceDisplay();
+            }, 5000);
+        }
+    });
 
-      <div id="footer">
-        <img
-          src="https://eiwgew27fhz.exactdn.com/wp-content/themes/puttosaurus/img/dots-footer.svg"
-          alt=""
-        />
-        <div id="f1">
-          <img
-            src="https://eiwgew27fhz.exactdn.com/wp-content/uploads/2023/02/logo-white.svg"
-            alt=""
-          />
-        </div>
-        <div id="f2">
-          <h3>TOPTRACER Ranges</h3>
-          <h3>Golf Lessons</h3>
-          <h3>Adventure Golf</h3>
-        </div>
-        <div id="f3">
-          <h3>coffee shop</h3>
-          <h3>LEAGUES</h3>
-          <h3>Contact us</h3>
-        </div>
-        <div id="f4">
-          <h4>
-            A20, SIDCUP BYPASS <br />
-            CHISLEHURST <br />
-            KENT <br />
-            BR7 6RP <br />
-            TEL: 0208 309 0181 <br />
-            GET DIRECTIONS <br />
-          </h4>
-        </div>
-      </div>
-    </div>
+    // ============ Scroll to Top Button ============
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            scrollTopBtn.style.display = 'block';
+        } else {
+            scrollTopBtn.style.display = 'none';
+        }
+    });
 
-    <!-- Scripts -->
-    <div id="mobile-nav-toggle">☰</div>
-    <button id="scrollTopBtn">↑</button>
+    scrollTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.1/gsap.min.js"
-      crossorigin="anonymous"
-    ></script>
+    // ============ Dark Mode Toggle ============
+    const darkToggle = document.getElementById('darkToggle');
+    darkToggle.addEventListener('change', function() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', this.checked);
+    });
 
-    <label class="switch">
-      <input type="checkbox" id="darkToggle" />
-      <span class="slider"></span>
-    </label>
-
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.1/ScrollTrigger.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script src="script.js"></script>
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          { pageLanguage: 'en' },
-          'google_translate_element'
-        );
-      }
-    </script>
-    <script
-      type="text/javascript"
-      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-    ></script>
-  </body>
-</html>
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        darkToggle.checked = true;
+        document.body.classList.add('dark-mode');
+    }
+});
